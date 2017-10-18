@@ -12,6 +12,7 @@
 #include <iomanip>
 #include <string>
 #include <iostream>
+#include <fstream>
 #include "ResizableArray.h"
 #include "Eclipse.h"
 const int NON_PARTIAL_COLUMN_COUNT = 17;

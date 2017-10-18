@@ -8,6 +8,7 @@
 #ifndef ECLIPSE_H_
 #define ECLIPSE_H_
 #include "EclipseR.h"
+#include "ResizableArray.h"
 const int NUM_COLUMNS = 18;
 using namespace std;
 class Eclipse {
@@ -19,7 +20,7 @@ public:
 	}
 	string GetColumnVal(int i ){
 		if(i < currColumn){
-		return array[i];
+		return columnArray[i];
 		}
 		throw "Index out of bounds";
 	}
@@ -27,7 +28,7 @@ public:
 	Eclipse& operator=(const Eclipse &eclipse);
 private:
 	friend std::ostream& operator<<(std::ostream &out, const Eclipse& eclipse);
-	string array[NUM_COLUMNS];
+	string columnArray[NUM_COLUMNS];
 	int currColumn;
 };
 

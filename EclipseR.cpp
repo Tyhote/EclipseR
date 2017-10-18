@@ -12,23 +12,29 @@ bool hasWrongColumns(string currentLine, int row, bool& isPartial) {
 	stringstream checkerSs(currentLine);
 	string checkerString = "";
 	Eclipse checkerEclipse;
+	size_t extraColumns = 0;
 	while (checkerSs >> checkerString) {
+		try{
 		checkerEclipse.InsertNext(checkerString);
+		} catch (invalid_argument& e){
+			++extraColumns;
+		}
 		checkerString = "";
 	}
-	isPartial = checkerEclipse.GetColumnVal(ECLIPSE_TYPE_COLUMN_INDEX).find('P') != string::npos;
+	isPartial = checkerEclipse.GetColumnVal(ECLIPSE_TYPE_COLUMN_INDEX).find('P')
+			!= string::npos;
 
 	if (isPartial) {
-		if (checkerEclipse.GetCurrColumn() != 16) {
-			cerr << "Error in data row " << row << ": " << checkerEclipse.GetCurrColumn()
-					<< " columns found. "
+		if (checkerEclipse.GetCurrColumn() != 16 || extraColumns > 0) {
+			cerr << "Error in data row " << row << ": "
+					<< checkerEclipse.GetCurrColumn() + extraColumns << " columns found. "
 							"Should be 16." << endl;
 			return true;
 		}
 	} else {
-		if (checkerEclipse.GetCurrColumn() != 18) {
-			cerr << "Error in data row " << row << ": " << checkerEclipse.GetCurrColumn()
-					<< " columns found. "
+		if (checkerEclipse.GetCurrColumn() != 18 || extraColumns > 0) {
+			cerr << "Error in data row " << row << ": "
+					<< checkerEclipse.GetCurrColumn() + extraColumns << " columns found. "
 							"Should be 18." << endl;
 			return true;
 		}
@@ -36,11 +42,18 @@ bool hasWrongColumns(string currentLine, int row, bool& isPartial) {
 	return false;
 }
 
-int main() {
+int main(){
+	ifstream dong = ifstream(cin);
+	string donger= "";
+	while(getline(cin))
+}
+
+ResizableArray<Eclipse> ProcessFile(string fileName) {
+	ifstream inputFile = ifstream(fileName);
 
 	string currentLine;
 	string currentDatum;
-	int lineNumber = 11; // lineNumber starts at 11 because we skip 10 lines at the beginning
+	int lineNumber = 1; // lineNumber starts at 1 because we skip 10 lines at the beginning
 	int columnNumber = 0;
 	ResizableArray<Eclipse> processedData = ResizableArray<Eclipse>();
 
@@ -68,7 +81,8 @@ int main() {
 							|| (columnNumber > 3 && columnNumber < 6)
 							|| (columnNumber > 6 && columnNumber < 9)
 							|| (columnNumber > 13 && columnNumber < 16)
-							|| (columnNumber > 15 && !isPartial && columnNumber < 18)) {
+							|| (columnNumber > 15 && !isPartial
+									&& columnNumber < 18)) {
 						stol(currentDatum);
 					}
 				} catch (invalid_argument& e) {
@@ -80,8 +94,20 @@ int main() {
 					continue;
 				}
 				try {
-					if (columnNumber > 10 && columnNumber < 13) {
+					if (columnNumber > 9 && columnNumber < 13) {
 						stod(currentDatum);
+
+						// Making sure the number was formatted correctly just in case.
+						size_t decimalCount = 0;
+						for(size_t i = 0; i < currentDatum.size(); ++i){
+							if(currentDatum[i] == '.'){
+								++decimalCount;
+							}
+						}
+						if(decimalCount !=1){
+							throw invalid_argument("Not a decimal");
+						}
+
 					}
 				} catch (invalid_argument& e) {
 					error = true;
@@ -91,6 +117,8 @@ int main() {
 					++columnNumber;
 					continue;
 				}
+
+
 
 				// If eclipse is partial, no need for two extra columns
 				if (isPartial) {
@@ -118,15 +146,19 @@ int main() {
 
 				stringstream outputLine;
 				outputLine << currEclipse;
-				string catNum = outputLine.str().substr(0,outputLine.str().find(',')); //str().substr(0,string::',');
+				string catNum = outputLine.str().substr(0,
+						outputLine.str().find(',')); //str().substr(0,string::',');
 
 				stringstream auxCompareSS;
 				auxCompareSS << processedData.get(i);
-				string compareCatNum = auxCompareSS.str().substr(0, auxCompareSS.str().find(','));
+				string compareCatNum = auxCompareSS.str().substr(0,
+						auxCompareSS.str().find(','));
 
 				if (catNum.compare(compareCatNum) == 0) {
 					isUnique = false;
-					cerr << "Error in row " << lineNumber << ": Duplicate catalog number " << catNum << "." << endl;
+					cerr << "Error in data row " << lineNumber
+							<< ": Duplicate catalog number " << catNum << "."
+							<< endl;
 					break;
 				}
 			}

@@ -141,7 +141,7 @@ void ResizableArray<T>::RemoveAt(unsigned int index) {
 	for (int i = index + 1; i < arrSize - 1; ++i) {
 		aux[i] = array[i];
 	}
-	delete[] array;
+	delete array;
 	array = aux;
 	return;
 }

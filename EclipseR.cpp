@@ -44,33 +44,13 @@ bool hasWrongColumns(string currentLine, int row, bool& isPartial) {
 	return false;
 }
 
-int main() {
-	string fileName;
-
-	// User inputs file name
-	cin >> fileName;
-	ifstream inputFile = ifstream(fileName);
-	while (inputFile.fail()) {
-		if(fileName == ""){
-			return 0; // Exit on empty string
-		}
-		cout << "File is not available.";
-		cin >> fileName;
-		inputFile.open(fileName);
-	}
-
-
-
-}
-
-
-ResizableArray<Eclipse> ProcessFile(ifstream inputFile) {
+ResizableArray<Eclipse> ProcessFile(ifstream& inputFile,
+		ResizableArray<Eclipse>& eclipses) {
 
 	string currentLine;
 	string currentDatum;
 	int lineNumber = 1; // lineNumber starts at 1 because we skip 10 lines at the beginning
 	int columnNumber = 0;
-	ResizableArray<Eclipse> processedData = ResizableArray<Eclipse>();
 
 	//  Discard first 10 lines
 	for (int i = 0; i < 10; i++) {
@@ -155,7 +135,7 @@ ResizableArray<Eclipse> ProcessFile(ifstream inputFile) {
 		// Checking for duplicates if no error in row
 		if (!error) {
 			bool isUnique = true;
-			for (int i = 0; i < processedData.size(); ++i) {
+			for (int i = 0; i < eclipses.size(); ++i) {
 
 				stringstream outputLine;
 				outputLine << currEclipse;
@@ -163,7 +143,7 @@ ResizableArray<Eclipse> ProcessFile(ifstream inputFile) {
 						outputLine.str().find(',')); //str().substr(0,string::',');
 
 				stringstream auxCompareSS;
-				auxCompareSS << processedData.get(i);
+				auxCompareSS << eclipses.get(i);
 				string compareCatNum = auxCompareSS.str().substr(0,
 						auxCompareSS.str().find(','));
 
@@ -176,7 +156,7 @@ ResizableArray<Eclipse> ProcessFile(ifstream inputFile) {
 				}
 			}
 			if (isUnique) {
-				processedData.Add(currEclipse);
+				eclipses.Add(currEclipse);
 			}
 		}
 
@@ -185,6 +165,43 @@ ResizableArray<Eclipse> ProcessFile(ifstream inputFile) {
 		columnNumber = 0;
 		error = false;
 	}
-	return processedData;
+	return eclipses;
+}
+
+int main() {
+	string userInput;
+	bool isDataEntered;
+	ResizableArray<Eclipse> storedEclipses = ResizableArray<Eclipse>();
+
+	// User inputs file name
+	cout << "Enter the name of a file to input." << endl;
+	cin >> userInput;
+	ifstream inputFile = ifstream();
+	while (userInput != "") { // If empty input, exit loop
+
+		inputFile.open(userInput);
+		if (!inputFile.fail()) {
+			ProcessFile(inputFile, storedEclipses);
+			isDataEntered = true;
+		} else {
+			cout << "File is not available." << endl;
+		}
+
+		userInput = "";
+		cin >> userInput;
+	}
+
+	if (!isDataEntered) { // Exit if no data
+		return 0;
+	}
+
+	do {
+		cout << "Would you like to Output, Sort, Find, or Quit (O,S,F,Q)?" << endl;
+		cin >> userInput;
+	} while (   userInput.compare("O") != 0
+              && userInput.compare("S") != 0
+		      && userInput.compare("F") != 0
+			  && userInput.compare("Q") != 0);
+
 }
 

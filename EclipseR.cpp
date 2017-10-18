@@ -14,9 +14,9 @@ bool hasWrongColumns(string currentLine, int row, bool& isPartial) {
 	Eclipse checkerEclipse;
 	size_t extraColumns = 0;
 	while (checkerSs >> checkerString) {
-		try{
-		checkerEclipse.InsertNext(checkerString);
-		} catch (invalid_argument& e){
+		try {
+			checkerEclipse.InsertNext(checkerString);
+		} catch (invalid_argument& e) {
 			++extraColumns;
 		}
 		checkerString = "";
@@ -27,14 +27,16 @@ bool hasWrongColumns(string currentLine, int row, bool& isPartial) {
 	if (isPartial) {
 		if (checkerEclipse.GetCurrColumn() != 16 || extraColumns > 0) {
 			cerr << "Error in data row " << row << ": "
-					<< checkerEclipse.GetCurrColumn() + extraColumns << " columns found. "
+					<< checkerEclipse.GetCurrColumn() + extraColumns
+					<< " columns found. "
 							"Should be 16." << endl;
 			return true;
 		}
 	} else {
 		if (checkerEclipse.GetCurrColumn() != 18 || extraColumns > 0) {
 			cerr << "Error in data row " << row << ": "
-					<< checkerEclipse.GetCurrColumn() + extraColumns << " columns found. "
+					<< checkerEclipse.GetCurrColumn() + extraColumns
+					<< " columns found. "
 							"Should be 18." << endl;
 			return true;
 		}
@@ -42,14 +44,27 @@ bool hasWrongColumns(string currentLine, int row, bool& isPartial) {
 	return false;
 }
 
-int main(){
-	ifstream dong = ifstream(cin);
-	string donger= "";
-	while(getline(cin))
+int main() {
+	string fileName;
+
+	// User inputs file name
+	cin >> fileName;
+	ifstream inputFile = ifstream(fileName);
+	while (inputFile.fail()) {
+		if(fileName == ""){
+			return 0; // Exit on empty string
+		}
+		cout << "File is not available.";
+		cin >> fileName;
+		inputFile.open(fileName);
+	}
+
+
+
 }
 
-ResizableArray<Eclipse> ProcessFile(string fileName) {
-	ifstream inputFile = ifstream(fileName);
+
+ResizableArray<Eclipse> ProcessFile(ifstream inputFile) {
 
 	string currentLine;
 	string currentDatum;
@@ -59,11 +74,11 @@ ResizableArray<Eclipse> ProcessFile(string fileName) {
 
 	//  Discard first 10 lines
 	for (int i = 0; i < 10; i++) {
-		getline(cin, currentLine);
+		getline(inputFile, currentLine);
 	}
 
 	// Getting lines from file while they exist
-	while (getline(cin, currentLine) && cin.good()) {
+	while (getline(inputFile, currentLine) && inputFile.good()) {
 		// Iterating through each column
 		stringstream ss(currentLine);
 		Eclipse currEclipse = Eclipse();
@@ -99,12 +114,12 @@ ResizableArray<Eclipse> ProcessFile(string fileName) {
 
 						// Making sure the number was formatted correctly just in case.
 						size_t decimalCount = 0;
-						for(size_t i = 0; i < currentDatum.size(); ++i){
-							if(currentDatum[i] == '.'){
+						for (size_t i = 0; i < currentDatum.size(); ++i) {
+							if (currentDatum[i] == '.') {
 								++decimalCount;
 							}
 						}
-						if(decimalCount !=1){
+						if (decimalCount != 1) {
 							throw invalid_argument("Not a decimal");
 						}
 
@@ -117,8 +132,6 @@ ResizableArray<Eclipse> ProcessFile(string fileName) {
 					++columnNumber;
 					continue;
 				}
-
-
 
 				// If eclipse is partial, no need for two extra columns
 				if (isPartial) {
@@ -172,6 +185,6 @@ ResizableArray<Eclipse> ProcessFile(string fileName) {
 		columnNumber = 0;
 		error = false;
 	}
-	cout << processedData;
+	return processedData;
 }
 

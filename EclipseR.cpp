@@ -45,7 +45,7 @@ bool hasWrongColumns(string currentLine, int row, bool& isPartial) {
 }
 
 ResizableArray<Eclipse> ProcessFile(ifstream& inputFile,
-		ResizableArray<Eclipse>& eclipses) {
+		ResizableArray<Eclipse>& eclipses, size_t attemptedLines, size_t validEclipses) {
 
 	string currentLine;
 	string currentDatum;
@@ -73,11 +73,11 @@ ResizableArray<Eclipse> ProcessFile(ifstream& inputFile,
 				// Data type error checking
 				try {
 					if ((columnNumber > 0 && columnNumber < 3)
-							|| (columnNumber > 3 && columnNumber < 6)
-							|| (columnNumber > 6 && columnNumber < 9)
+							|| (columnNumber > 3  && columnNumber < 6)
+							|| (columnNumber > 6  && columnNumber < 9)
 							|| (columnNumber > 13 && columnNumber < 16)
 							|| (columnNumber > 15 && !isPartial
-									&& columnNumber < 18)) {
+									              && columnNumber < 18)) {
 						stol(currentDatum);
 					}
 				} catch (invalid_argument& e) {
@@ -171,6 +171,9 @@ ResizableArray<Eclipse> ProcessFile(ifstream& inputFile,
 int main() {
 	string userInput;
 	bool isDataEntered;
+	size_t attemptedLines = 0;
+	size_t validEclipses;
+	size_t eclipsesInMemory = 0;
 	ResizableArray<Eclipse> storedEclipses = ResizableArray<Eclipse>();
 
 	// User inputs file name
@@ -196,12 +199,11 @@ int main() {
 	}
 
 	do {
-		cout << "Would you like to Output, Sort, Find, or Quit (O,S,F,Q)?" << endl;
+		cout << "Would you like to Output, Sort, Find, or Quit (O,S,F,Q)?"
+				<< endl;
 		cin >> userInput;
-	} while (   userInput.compare("O") != 0
-              && userInput.compare("S") != 0
-		      && userInput.compare("F") != 0
-			  && userInput.compare("Q") != 0);
+	} while (userInput.compare("O") != 0 && userInput.compare("S") != 0
+			&& userInput.compare("F") != 0 && userInput.compare("Q") != 0);
 
 }
 

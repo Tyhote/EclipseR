@@ -6,17 +6,20 @@
 CPP_SRCS += \
 ../ArrayListUnitTest.cpp \
 ../Eclipse.cpp \
-../EclipseR.cpp 
+../EclipseR.cpp \
+../ResizableArrayHelper.cpp 
 
 OBJS += \
 ./ArrayListUnitTest.o \
 ./Eclipse.o \
-./EclipseR.o 
+./EclipseR.o \
+./ResizableArrayHelper.o 
 
 CPP_DEPS += \
 ./ArrayListUnitTest.d \
 ./Eclipse.d \
-./EclipseR.d 
+./EclipseR.d \
+./ResizableArrayHelper.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

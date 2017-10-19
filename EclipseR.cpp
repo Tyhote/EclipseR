@@ -44,9 +44,9 @@ bool hasWrongColumns(string currentLine, int row, bool& isPartial) {
 	return false;
 }
 
-ResizableArray<Eclipse> ProcessFile(ifstream& inputFile,
-		ResizableArray<Eclipse>& eclipses, size_t attemptedLines, size_t validEclipses) {
+ResizableArray<Eclipse> ProcessFile(ifstream& inputFile, size_t attemptedLines, size_t validEclipses) {
 
+	ResizableArray<Eclipse> eclipses = ResizableArray<Eclipse>();
 	string currentLine;
 	string currentDatum;
 	int lineNumber = 1; // lineNumber starts at 1 because we skip 10 lines at the beginning
@@ -134,6 +134,7 @@ ResizableArray<Eclipse> ProcessFile(ifstream& inputFile,
 
 		// Checking for duplicates if no error in row
 		if (!error) {
+			validEclipses++;
 			bool isUnique = true;
 			for (int i = 0; i < eclipses.size(); ++i) {
 
@@ -165,15 +166,30 @@ ResizableArray<Eclipse> ProcessFile(ifstream& inputFile,
 		columnNumber = 0;
 		error = false;
 	}
+	attemptedLines += lineNumber - 1;
+
 	return eclipses;
 }
+
+void OutputHeader(){
+	cout << "Title: Five Millennium Catalog of Solar Eclipses: -1999 to +3000 (2000 BCE to 3000CE)" << endl <<
+			"Authors: Fred Espenak and Jean Meeus" << endl <<
+	"Source: Based on NASA Technical Publication TP-2006-21414" << endl <<
+	"Catalog Key: http://eclipse.gsfc.nasa.gov/SEcat5/catkey.html" << endl <<
+	"Date: 2007 Jan 26" << endl <<
+	"----------------------------------------------------------------------------------------------------------------" << endl <<
+	"                            TD of" << endl <<
+	" Cat. Canon    Calendar   Greatest          Luna Saros Ecl.           Ecl.                Sun  Sun  Path Central" << endl <<
+	"  No. Plate      Date      Eclipse     DT    Num  Num  Type  Gamma    Mag.   Lat.   Long. Alt  Azm Width   Dur." << endl <<
+	"                                       s                                      ¡      ¡     ¡    ¡   km" << endl;
+}
+
 
 int main() {
 	string userInput;
 	bool isDataEntered;
 	size_t attemptedLines = 0;
-	size_t validEclipses;
-	size_t eclipsesInMemory = 0;
+	size_t validEclipses = 0;
 	ResizableArray<Eclipse> storedEclipses = ResizableArray<Eclipse>();
 
 	// User inputs file name
@@ -184,11 +200,14 @@ int main() {
 
 		inputFile.open(userInput);
 		if (!inputFile.fail()) {
-			ProcessFile(inputFile, storedEclipses);
+			ResizableArray<Eclipse> aux = ProcessFile(inputFile, attemptedLines, validEclipses);
+			aux = Sort(aux, 1);
+			storedEclipses = Merge(storedEclipses, aux, 1);
 			isDataEntered = true;
 		} else {
 			cout << "File is not available." << endl;
 		}
+
 
 		userInput = "";
 		cin >> userInput;
@@ -205,5 +224,13 @@ int main() {
 	} while (userInput.compare("O") != 0 && userInput.compare("S") != 0
 			&& userInput.compare("F") != 0 && userInput.compare("Q") != 0);
 
+	if(userInput.compare("O") == 0){
+		OutputHeader();
+	}
+	if(userInput.compare("S") == 0){
+
+	}
+
 }
+
 

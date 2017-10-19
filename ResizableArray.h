@@ -22,6 +22,7 @@ public:
 	ResizableArray<T>();
 	~ResizableArray<T>();
 	void* operator new(size_t size);
+	ResizableArray<T> operator+(const ResizableArray<T>& right);
 	void Add(T object);
 	void AddAt(T object, unsigned int i);
 	void Remove(T object);
@@ -34,12 +35,19 @@ public:
 	int arraySize() {
 		return arrSize;
 	}
+	bool isSorted(){
+		return Sorted;
+	}
+	void setSorted(bool Sorted){
+		this->Sorted = Sorted;
+	}
 private:
 	void increase();
 	void decrease();
 	unsigned int arrSize;
 	unsigned int numItems = 0;
 	T* array;
+	bool Sorted = false;
 };
 
 template<class T>
@@ -61,6 +69,14 @@ void* ResizableArray<T>::operator new(size_t size) {
 	aux->arrSize = size;
 	aux->array = new T[size];
 	return aux;
+}
+
+template<class T>
+ResizableArray<T> ResizableArray<T>::operator+(const ResizableArray<T>& right){
+	for(int i = 0; i < right.size(); i++){
+		this->Add(right.get(i));
+	}
+	return *this;
 }
 
 template<class T>

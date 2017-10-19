@@ -7,7 +7,7 @@
 
 #ifndef ECLIPSE_H_
 #define ECLIPSE_H_
-#include "EclipseR.h"
+#include "iomanip"
 #include "ResizableArray.h"
 const int NUM_COLUMNS = 18;
 using namespace std;
